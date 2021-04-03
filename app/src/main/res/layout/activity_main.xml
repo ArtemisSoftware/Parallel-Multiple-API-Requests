@@ -29,6 +29,16 @@
         app:layout_constraintStart_toEndOf="@+id/btn_single_call"
         app:layout_constraintTop_toTopOf="@+id/btn_single_call" />
 
+
+    <Button
+        android:id="@+id/btn_parallel_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/parallel_call"
+        app:layout_constraintStart_toStartOf="@+id/btn_single_call"
+        app:layout_constraintTop_toBottomOf="@+id/btn_single_call" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"

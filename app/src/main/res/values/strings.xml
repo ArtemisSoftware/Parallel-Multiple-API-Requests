@@ -2,4 +2,5 @@
     <string name="app_name">ParallelMultipleAPIRequests</string>
     <string name="single_call">Single call</string>
     <string name="single_call_error">Single call with error</string>
+    <string name="parallel_call">Parallel request</string>
 </resources>

@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.artemissoftware.parallelmultipleapirequests.repository.CryptoCurrencyRepository
 import com.artemissoftware.parallelmultipleapirequests.repository.JsonPlaceHolderRepository
 import com.artemissoftware.parallelmultipleapirequests.util.DispatcherProvider
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -55,11 +57,6 @@ class MainViewModel @ViewModelInject constructor(
 //
 //                }
 
-
-
-
-
-                //users.postValue(Resource.success(usersFromApi))
             } catch (e: Exception) {
 
                 _mainEvent.value = MainEvent.Failure(e.message!!)
@@ -76,7 +73,7 @@ class MainViewModel @ViewModelInject constructor(
             _mainEvent.value = MainEvent.Loading
 
             try {
-                val result = cryptoCurrencyRepository.getError()
+                cryptoCurrencyRepository.getError()
                 _mainEvent.value = MainEvent.Empty
             }
             catch (e:Exception){
@@ -84,6 +81,34 @@ class MainViewModel @ViewModelInject constructor(
             }
         }
     }
+
+
+
+
+    fun parallelRequest() {
+        viewModelScope.launch {
+            coroutineScope {
+
+                _mainEvent.value = MainEvent.Loading
+
+                val call1 = async {  cryptoCurrencyRepository.getCoinData("LTC") }
+                val call2 = async { cryptoCurrencyRepository.getCoinData("DOGE") }
+
+                try {
+                    val ltc = call1.await()
+                    val doge = call2.await()
+
+                    _mainEvent.value = MainEvent.Success("LTC has  ${ltc.ticker.markets.size} markets and DOGE has  ${doge.ticker.markets.size} markets")
+
+                } catch (e: Exception) {
+                    _mainEvent.value = MainEvent.Failure(e.message!!)
+                }
+
+            }
+        }
+    }
+
+
 
 
 
