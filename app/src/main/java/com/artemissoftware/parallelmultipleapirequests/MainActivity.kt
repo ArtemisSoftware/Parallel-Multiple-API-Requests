@@ -31,6 +31,10 @@ class MainActivity : AppCompatActivity() {
             viewModel.getCoinData("BTC")
         }
 
+        binding.btnSingleCallError.setOnClickListener {
+            viewModel.getError()
+        }
+
 
         lifecycleScope.launchWhenStarted {
 
@@ -52,7 +56,9 @@ class MainActivity : AppCompatActivity() {
                     is MainViewModel.MainEvent.Loading -> {
                         binding.progress.isVisible = true
                     }
-                    else -> Unit
+                    else ->{
+                        binding.progress.isVisible = false
+                    }
                 }
             }
         }

@@ -61,36 +61,30 @@ class MainViewModel @ViewModelInject constructor(
 
                 //users.postValue(Resource.success(usersFromApi))
             } catch (e: Exception) {
+
                 _mainEvent.value = MainEvent.Failure(e.message!!)
             }
 
-
-
-
-
-//            _conversion.value = CurrencyEvent.Loading
-//
-//            when(val ratesResponse = repository.getRates(toCurrency)) {
-//
-//                is Resource.Error -> _conversion.value = CurrencyEvent.Failure(ratesResponse.message!!)
-//
-//                is Resource.Success -> {
-//
-//                    val rates = ratesResponse.data!!.rates
-//                    val rate: Double = getRateForCurrency(toCurrency, rates) as Double
-//
-//                    if(rate == null) {
-//                        _conversion.value = CurrencyEvent.Failure("Unexpected error")
-//                    } else {
-//
-//                        val convertedCurrency = round((fromAmount * rate * 100.0)) / 100
-//                        _conversion.value = CurrencyEvent.Success("$fromAmount = $convertedCurrency $toCurrency")
-//                    }
-//                }
-//
-//            }
         }
     }
+
+
+    fun getError() {
+
+        viewModelScope.launch(dispatcherProvider.io) {
+
+            _mainEvent.value = MainEvent.Loading
+
+            try {
+                val result = cryptoCurrencyRepository.getError()
+                _mainEvent.value = MainEvent.Empty
+            }
+            catch (e:Exception){
+                _mainEvent.value = MainEvent.Failure( e.message!! + " - " + e.cause?.message)
+            }
+        }
+    }
+
 
 
     sealed class MainEvent {
