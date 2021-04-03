@@ -3,5 +3,6 @@
     <string name="single_call">Single call</string>
     <string name="single_call_error">Single call with error</string>
     <string name="parallel_call">Parallel request</string>
-    <string name="parallel_call_error">Parallel request error</string>
+    <string name="parallel_call_error">Parallel request with error</string>
+    <string name="parallel_call_survive_call">Parallel request survive error</string>
 </resources>

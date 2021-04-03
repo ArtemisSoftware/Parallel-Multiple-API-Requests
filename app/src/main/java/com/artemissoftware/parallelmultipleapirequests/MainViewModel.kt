@@ -11,6 +11,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import kotlin.math.round
 
 class MainViewModel @ViewModelInject constructor(
@@ -86,7 +87,7 @@ class MainViewModel @ViewModelInject constructor(
 
 
     fun parallelRequest() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             coroutineScope {
 
                 _mainEvent.value = MainEvent.Loading
@@ -112,7 +113,7 @@ class MainViewModel @ViewModelInject constructor(
 
     fun parallelRequestError() {
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             try {
                 coroutineScope {
 
@@ -141,6 +142,38 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
+
+
+    fun parallelRequestSurviveError() {
+
+        viewModelScope.launch(dispatcherProvider.io) {
+            supervisorScope {
+
+
+                val call1 = async { cryptoCurrencyRepository.getCoinData("LTC") }
+                val call2 = async { cryptoCurrencyRepository.getCoinData("DOGE") }
+                val call3 = async { cryptoCurrencyRepository.getError() }
+
+                val ltc = try {
+                    call1.await()
+                } catch (ex: Exception) {
+                    null
+                }
+                val doge = try {
+                    call2.await()
+                } catch (ex: Exception) {
+                    null
+                }
+                val error = try {
+                    call3.await()
+                } catch (ex: Exception) {
+                    ex.message
+                }
+
+                _mainEvent.value = MainEvent.Success("LTC has  ${ltc?.ticker?.markets?.size} markets and DOGE has  ${doge?.ticker?.markets?.size} markets and ERROR ${error}")
+            }
+        }
+    }
 
     sealed class MainEvent {
         class Success(val resultText: String): MainEvent()
