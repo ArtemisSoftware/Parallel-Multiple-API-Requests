@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
             viewModel.parallelRequest()
         }
 
+        binding.btnParallelCallError.setOnClickListener {
+            viewModel.parallelRequestError()
+        }
 
         lifecycleScope.launchWhenStarted {
 

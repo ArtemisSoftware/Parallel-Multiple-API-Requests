@@ -110,6 +110,36 @@ class MainViewModel @ViewModelInject constructor(
 
 
 
+    fun parallelRequestError() {
+
+        viewModelScope.launch {
+            try {
+                coroutineScope {
+
+                    _mainEvent.value = MainEvent.Loading
+
+                    val call1 = async { cryptoCurrencyRepository.getCoinData("LTC") }
+                    val call2 = async { cryptoCurrencyRepository.getCoinData("DOGE") }
+                    val call3 = async { cryptoCurrencyRepository.getError() }
+
+                    try {
+                        val ltc = call1.await()
+                        val doge = call2.await()
+                        val error = call3.await()
+
+                        _mainEvent.value = MainEvent.Success("LTC has  ${ltc.ticker.markets.size} markets and DOGE has  ${doge.ticker.markets.size} markets")
+
+                    } catch (e: Exception) {
+                        _mainEvent.value = MainEvent.Failure(e.message!!)
+                    }
+                }
+
+            }
+            catch (e: Exception) {
+                _mainEvent.value = MainEvent.Failure(e.message!!)
+            }
+        }
+    }
 
 
     sealed class MainEvent {
