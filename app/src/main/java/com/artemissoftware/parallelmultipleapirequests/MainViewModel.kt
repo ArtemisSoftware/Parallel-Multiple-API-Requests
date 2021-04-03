@@ -3,15 +3,14 @@ package com.artemissoftware.parallelmultipleapirequests
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.artemissoftware.parallelmultipleapirequests.api.models.Crypto
 import com.artemissoftware.parallelmultipleapirequests.repository.CryptoCurrencyRepository
 import com.artemissoftware.parallelmultipleapirequests.repository.JsonPlaceHolderRepository
 import com.artemissoftware.parallelmultipleapirequests.util.DispatcherProvider
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import com.artemissoftware.parallelmultipleapirequests.util.extensions.asyncAll
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
 import kotlin.math.round
 
 class MainViewModel @ViewModelInject constructor(
@@ -105,6 +104,15 @@ class MainViewModel @ViewModelInject constructor(
                     _mainEvent.value = MainEvent.Failure(e.message!!)
                 }
 
+                //clean code
+
+//                var result = ""
+//                val listCrypto = mutableListOf<String>("LTC", "DOGE")
+//
+//                asyncAll(listCrypto) { cryptoCurrencyRepository.getCoinData(it) }.awaitAll().forEach { result += "${it.success} has  ${it.ticker.markets.size} markets  "}
+//
+//                _mainEvent.value = MainEvent.Success(result)
+
             }
         }
     }
@@ -133,6 +141,13 @@ class MainViewModel @ViewModelInject constructor(
                     } catch (e: Exception) {
                         _mainEvent.value = MainEvent.Failure(e.message!!)
                     }
+
+                    //clean code
+
+//                var result = ""
+//                val listCrypto = mutableListOf<String>("LTC", "DOGE")
+//                asyncAll(listCrypto) { cryptoCurrencyRepository.getError() }.awaitAll().forEach { result += "${it.success} has  ${it.ticker.markets.size} markets  "}
+//                _mainEvent.value = MainEvent.Success(result)
                 }
 
             }
